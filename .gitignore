@@ -1,4 +1,5 @@
 .vscode/
+_local/
 providers/custom/
 
 config.json
