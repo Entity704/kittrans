@@ -9,7 +9,7 @@ def wrap_text(
 
     row = 0
     while row < len(lines):
-        line = lines[row]
+        line = lines[row].rstrip()
 
         if len(line) > clip_width:
             lines.insert(row + 1, line[clip_width:])
