@@ -1,6 +1,6 @@
 # Kittrans
 
-[ **English** | [**使简易化的中国人**](README_zh-Hans.md) ]
+[ **English** | [**简体中文**](README_zh-Hans.md) | [**使简易化的中国人**](README_zh-Huh.md) ]
 
 A simple translator for Kitty terminal emulator.
 
@@ -10,7 +10,7 @@ A simple translator for Kitty terminal emulator.
 2. Add `map alt+shift+t kitten kittrans/kittrans.py` to your config file (eg. `kitty.conf`)
 3. Create `config.json` in kittrans directory and [configure it](#configure)
 
-And then, you can select a string of text and press `alt+shift+t` to translate it.
+And then, you can select a string of text and press <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>T</kbd> to translate it.
 
 ## Configure
 

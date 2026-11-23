@@ -1,24 +1,24 @@
 # Kittrans
 
-[ [**English**](README.md) | **使简易化的中国人** ]
+[ [**English**](README.md) | **简体中文** | [**使简易化的中国人**](README_zh-Huh.md) ]
 
-一个初级的翻译者，为了在那漫长的征途，给予你、我以希望，实只得使我们深陷其中而无法超脱的虚假之终——那个名为 Kitty 的物件。
+为 Kitty 终端模拟器编写的简易翻译器。
 
-## 在设置上面
+## 安装
 
-1. 抄袭那原稿趋于 `~/.config/kitty/kittrans`
-2. 计算 `map alt+shift+t kitten kittrans/kittrans.py` 的总和趋于你们的配置卷宗（例如 `kitty.conf`）
-3. 任命 `config.json` 从事于 kittrans 工商名录和 [使它形成](#装配)
+1. 将脚本复制到 `~/.config/kitty/kittrans`
+2. 添加 `map alt+shift+t kitten kittrans/kittrans.py` 到你的配置文件（如 `kitty.conf`）
+3. 在 kittrans 目录添加 `config.json` 并[配置](#配置)
 
-与然后, 你们能够萃取一个细绳的课文和逼迫 `alt+shift+t` 趋于转变它。
+然后，你就可以选择一串文本并点击 <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>T</kbd> 去翻译它了。
 
-## 装配
+## 配置
 
-那配置卷宗使用 JSON 开本。
+配置文件使用 JSON 格式。
 
-期权:
+配置项:
 
-- `"provider"`: 那伙食承办人组件途径
-- `"source"`: 水源措辞, `"auto"` 为了机械地察觉
-- `"target"`: 靶子措辞
-- `"options"`: 另外收费的期权为了伙食承办人（例如 API 关键帧，终结点 URI）
+- `"provider"`：翻译提供者模块路径
+- `"source"`：源语言，使用 `"auto"` 以自动检测
+- `"target"`：目标语言
+- `"options"`：给特定提供者的额外配置（如 API 密钥、接口 URI）
