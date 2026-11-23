@@ -1,7 +1,8 @@
 import json
 import importlib, pathlib, os, sys, select
 
-import kitty, kittens
+import kitty, kitty.utils
+import kittens
 
 import ansies, text_wrapper
 import providers
@@ -22,18 +23,20 @@ def load_provider(config):
 
     return provider(config.get('options', {}))
 
-def read_stdin(timeout=0.5):
+def read_stdin(timeout: float = 0.5):
     fd = sys.stdin.fileno()
 
     ready, _, _ = select.select([fd], [], [], timeout)
-
     if not ready:
         return ''
 
-    return os.read(fd, 16 * 1024 * 1024).decode('utf-8')
+    screen_size = kitty.utils.screen_size_function()()
+    data = os.read(fd, max(4096, screen_size.cols * screen_size.rows * 4)).decode('utf-8')
+
+    return data
 
 class Handler(kittens.tui.handler.Handler):
-    def __init__(self, text: str):
+    def __init__(self, text: str, context: str = ''):
         super().__init__()
         self.text = text
 
@@ -51,8 +54,9 @@ class Handler(kittens.tui.handler.Handler):
 
             self.translation, self.source = provider.translate(
                 text=text,
-                source=config.get('source', 'auto'),
                 target=self.target,
+                source=config.get('source', 'auto'),
+                context=context
             )
         except Exception as err:
             self.error = f'Error: {err}'
@@ -88,17 +92,18 @@ class Handler(kittens.tui.handler.Handler):
         self.draw()
 
 def main(args: list[str]) -> str:
-    text = read_stdin()
+    text = text = args[1] if len(args) > 1 else ''
+    context = read_stdin().strip('\n')
 
-    if not text.strip():
+    if not text.strip() or text == '@selection':
         return ''
 
-    handler = Handler(text)
+    handler = Handler(text, context)
     kittens.tui.loop.Loop().loop(handler)
 
     return ''
 
-@kittens.tui.handler.result_handler(type_of_input='selection')
+@kittens.tui.handler.result_handler(type_of_input='text')
 def handle_result(
     args: list[str],
     answer: str,
