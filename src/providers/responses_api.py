@@ -41,7 +41,7 @@ Context:
 Text to be translated:
 <source_text>
 今天天气真不错。
-</soutce_text>
+</source_text>
 ```
 
 Output:
@@ -66,7 +66,7 @@ Context:
 Text to be translated:
 <source_text>
 {source_text}
-</soutce_text>\
+</source_text>\
 '''
 
 class Provider:
@@ -125,7 +125,7 @@ class Provider:
         result = json.loads(response_data['output'][0]['content'][0]['text'])
 
         source_lang = source
-        if source == 'auto':
+        if source == 'auto' and result['guessed_language']:
             source_lang = f'[auto]{result['guessed_language']}'
 
         return result['translation'], source_lang
