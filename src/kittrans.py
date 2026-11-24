@@ -1,3 +1,4 @@
+import typing
 import json
 import importlib, pathlib
 import os, sys, select, traceback
@@ -10,13 +11,13 @@ import providers
 
 BASE_DIR = pathlib.Path(
     os.path.expanduser('~/.config/kitty/kittrans/')).resolve()
-CONFIG_FILE = BASE_DIR / 'config.json'
+CONFIG_FILE = BASE_DIR / 'configs' / 'config.json'
 
-def load_config():
+def load_config() -> dict[str, typing.Any]:
     with open(CONFIG_FILE, encoding='utf-8') as f:
         return json.load(f)
 
-def load_provider(config):
+def load_provider(config: dict[str, typing.Any]) -> providers.Provider:
     provider_name = config.get('provider', 'providers.microsoft')
 
     module = importlib.import_module(provider_name)
@@ -26,7 +27,7 @@ def load_provider(config):
 
     return provider(options)
 
-def read_stdin(timeout: float = 0.5):
+def read_stdin(timeout: float = 0.5) -> str:
     fd = sys.stdin.fileno()
 
     ready, _, _ = select.select([fd], [], [], timeout)

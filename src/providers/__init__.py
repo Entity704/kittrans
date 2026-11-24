@@ -1,6 +1,6 @@
 import typing
 
-class ProviderProtocol(typing.Protocol):
+class Provider(typing.Protocol):
     def __init__(self, options: dict[str, typing.Any] = {}):
         ...
 

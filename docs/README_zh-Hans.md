@@ -1,14 +1,14 @@
 # Kittrans
 
-[ [**English**](README.md) | **简体中文** ]
+[ [**English**](../README.md) | **简体中文** ]
 
 为 Kitty 终端模拟器编写的简易翻译器。
 
 ## 安装
 
 1. 将脚本复制到 `~/.config/kitty/kittrans`
-2. 添加 `map alt+shift+t kitten kittrans/kittrans.py @selection` 到你的配置文件（如 `kitty.conf`）
-3. 在 kittrans 目录添加 `config.json` 并[配置](#配置)
+2. 添加 `map alt+shift+t kitten kittrans/src/kittrans.py @selection` 到你的配置文件（如 `kitty.conf`）
+3. 在 `configs` 目录添加 `config.json` 并[配置](#配置)
 
 然后，你就可以选择一串文本并点击 <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>T</kbd> 去翻译它了。
 
