@@ -6,7 +6,7 @@
 
 ## 安装
 
-1. 将脚本复制到 `~/.config/kitty/kittrans`
+1. 将项目复制到你的 Kitty 配置目录（可能是 `~/.config/kitty/kittrans`）
 2. 添加 `map alt+shift+t kitten kittrans/src/kittrans.py @selection` 到你的配置文件（如 `kitty.conf`）
 3. 在 `configs` 目录添加 `config.json` 并[配置](#配置)
 

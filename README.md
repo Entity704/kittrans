@@ -6,7 +6,7 @@ A simple translator for Kitty terminal emulator.
 
 ## Setting up
 
-1. Copy the scripts to `~/.config/kitty/kittrans`
+1. Copy the scripts to your Kitty's config directory (probably `~/.config/kitty/kittrans`)
 2. Add `map alt+shift+t kitten kittrans/src/kittrans.py @selection` to your config file (eg. `kitty.conf`)
 3. Create `config.json` in `configs` directory and [configure it](#configure)
 

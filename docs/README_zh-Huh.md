@@ -6,7 +6,7 @@
 
 ## 在设置上面
 
-1. 抄袭那原稿趋于 `~/.config/kitty/kittrans`
+1. 抄袭那原稿趋于你们的 Kitty 的配置工商名录（大概 `~/.config/kitty/kittrans`）
 2. 计算 `map alt+shift+t kitten kittrans/src/kittrans.py @selection` 的总和趋于你们的配置卷宗（例如 `kitty.conf`）
 3. 任命 `config.json` 从事于 `configs` 工商名录和 [使它形成](#装配)
 
