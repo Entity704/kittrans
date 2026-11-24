@@ -1,6 +1,6 @@
 # Kittrans
 
-[ **English** | [**简体中文**](README_zh-Hans.md) | [**使简易化的中国人**](README_zh-Huh.md) ]
+[ **English** | [**简体中文**](README_zh-Hans.md) ]
 
 A simple translator for Kitty terminal emulator.
 

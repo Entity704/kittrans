@@ -1,6 +1,6 @@
 # Kittrans
 
-[ [**English**](README.md) | [**简体中文**](README_zh-Hans.md) | **使简易化的中国人** ]
+[ [**English**](README.md) | [**简体中文**](README_zh-Hans.md) | **~~使简易化的中国人~~** ]
 
 一个初级的翻译者，为了在那漫长的征途，给予你、我以希望，实只得使我们深陷其中而无法超脱的虚假之终——那个名为 Kitty 的物件。
 

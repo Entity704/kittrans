@@ -1,6 +1,6 @@
 # Kittrans
 
-[ [**English**](README.md) | **简体中文** | [**使简易化的中国人**](README_zh-Huh.md) ]
+[ [**English**](README.md) | **简体中文** ]
 
 为 Kitty 终端模拟器编写的简易翻译器。
 
