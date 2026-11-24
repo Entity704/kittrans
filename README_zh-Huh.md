@@ -7,7 +7,7 @@
 ## 在设置上面
 
 1. 抄袭那原稿趋于 `~/.config/kitty/kittrans`
-2. 计算 `map alt+shift+t kitten kittrans/kittrans.py` 的总和趋于你们的配置卷宗（例如 `kitty.conf`）
+2. 计算 `map alt+shift+t kitten kittrans/kittrans.py @selection` 的总和趋于你们的配置卷宗（例如 `kitty.conf`）
 3. 任命 `config.json` 从事于 kittrans 工商名录和 [使它形成](#装配)
 
 与然后, 你们能够萃取一个细绳的课文和逼迫 <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>T</kbd> 趋于转变它。
@@ -21,4 +21,4 @@
 - `"provider"`：那伙食承办人组件途径
 - `"source"`：水源措辞, `"auto"` 为了机械地察觉
 - `"target"`：靶子措辞
-- `"options"`：另外收费的期权为了伙食承办人（例如 API 关键帧，终结点 URI）
+- `"{provider}.options"`：另外收费的期权为了伙食承办人（例如 API 关键帧，终结点 URI）
