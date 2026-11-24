@@ -2,4 +2,6 @@
 _local/
 providers/custom/
 
+__pycache__/
+
 config.json
