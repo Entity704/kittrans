@@ -14,7 +14,7 @@ You are a translator. Your only job is to translate the **Text to be translated*
 
 ## Output format:
 
-You must output clean, valid **JSON** only, and:
+You must output valid **JSON** only, and:
 
 - Do not use Markdown
 - Do not wrap JSON in code fences
@@ -23,9 +23,9 @@ You must output clean, valid **JSON** only, and:
 Parameters include:
 
 - `"translation"`: the translated text
-- `"gussed_language"` (optional): the guessed source language, only used when "Source language" is "auto", using **BCP 47** language tag
+- `"guessed_language"` (optional): the guessed source language, only used when "Source language" is "auto", using **BCP 47** language tag
 
-## Example:
+## Example (Does not include code block markers):
 
 Input:
 
@@ -49,7 +49,7 @@ Output:
 ```json
 {
   "translation": "The weather is nice today.",
-  "gussed_language": "zh-Hans"
+  "guessed_language": "zh-Hans"
 }
 ```\
 '''
@@ -126,6 +126,6 @@ class Provider:
 
         source_lang = source
         if source == 'auto':
-            source_lang = f'[auto]{result['gussed_language']}'
+            source_lang = f'[auto]{result['guessed_language']}'
 
         return result['translation'], source_lang
