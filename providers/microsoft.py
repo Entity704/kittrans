@@ -1,9 +1,10 @@
+import typing
 import json
-import urllib.request
+import urllib.parse, urllib.request
 
 class Provider:
-    def __init__(self, options: list[str] = []):
-        pass
+    def __init__(self, options: dict[str, typing.Any] = {}):
+        self.options = options
 
     def translate(
         self,
@@ -14,12 +15,17 @@ class Provider:
     ) -> tuple[str, str]:
         source_lang = source if source != 'auto' else ''
 
+        params = {
+            'from': source_lang,
+            'to': target,
+            'isEnterpriseClient': 'false'
+        }
+        query = urllib.parse.urlencode(params)
+
         request = urllib.request.Request(
-            f'https://edge.microsoft.com/translate/translatetext?from={source_lang}&to={target}&isEnterpriseClient=false',
+            f'https://edge.microsoft.com/translate/translatetext?{query}',
             data=json.dumps([text]).encode('utf-8'),
-            headers={
-                'Content-Type': 'application/json'
-            },
+            headers={'Content-Type': 'application/json'},
             method='POST'
         )
 

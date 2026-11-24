@@ -1,7 +1,7 @@
-from typing import Protocol
+import typing
 
-class ProviderProtocol(Protocol):
-    def __init__(self, options: list[str] = []):
+class ProviderProtocol(typing.Protocol):
+    def __init__(self, options: dict[str, typing.Any] = {}):
         ...
 
     def translate(

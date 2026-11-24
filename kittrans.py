@@ -66,23 +66,28 @@ class Handler(kittens.tui.handler.Handler):
         self.draw()
 
     def draw(self):
-        if not self.error:
-            text = text_wrapper.wrap_text(self.text, 80, 1)
-            translation = text_wrapper.wrap_text(self.translation, 80, 1)
+        self.cmd.clear_screen()
 
-            self.print(f'{ansies.ITALIC}Origin text {ansies.RESET}({self.source}):\n')
+        if not self.error:
+            indent_size = 2 if self.screen_size.cols > 3 else 0
+            max_width = max(1, min(80, self.screen_size.cols - indent_size - 1))
+
+            text = text_wrapper.wrap_text(self.text, max_width, indent_size)
+            translation = text_wrapper.wrap_text(self.translation, max_width, indent_size)
+
+            self.print(f'{ansies.BOLD}Origin text {ansies.RESET}({self.source}):\n{ansies.YELLOW}')
             for line in text:
                 self.print(line)
-            self.print('\n')
+            self.print(f'{ansies.RESET}\n')
 
-            self.print(f'{ansies.ITALIC}Translation {ansies.RESET}({self.target}):\n{ansies.BOLD}')
+            self.print(f'{ansies.BOLD}Translation {ansies.RESET}({self.target}):\n{ansies.CYAN}')
             for line in translation:
                 self.print(line)
             self.print(f'{ansies.RESET}\n')
         else:
             self.print(f'{ansies.RED}[×] {self.error}{ansies.RESET}\n')
 
-        self.print(f'{ansies.DIM}Press [Enter], [Esc] or [Q]...{ansies.RESET}')
+        self.print(f' {ansies.ITALIC}{ansies.DIM}Press [Enter], [Esc] or [Q]...{ansies.RESET}')
 
     def on_key(self, key_event):
         if key_event.key in ('ENTER', 'ESCAPE', 'q'):
