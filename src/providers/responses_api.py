@@ -83,7 +83,6 @@ class Provider:
 
         self.headers = options.get('headers', {})
         self.reasoning = options.get('reasoning', 'none')
-        self.reasoning_summary = options.get('reasoning_summary', 'auto')
         self.instruction = options.get('instruction', DEFAULT_INSTRUCTION)
         self.prompt = options.get('prompt', DEFAULT_PROMPT)
         self.temperature = options.get('temperature', 0.0)
@@ -107,8 +106,7 @@ class Provider:
             'input': self.prompt.format(source=source, target=target, source_text=text, context=context),
             'instructions': self.instruction,
             'reasoning': {
-                'effort': self.reasoning,
-                'summary': self.reasoning_summary
+                'effort': self.reasoning
             },
             'temperature': self.temperature,
             'stream': False
