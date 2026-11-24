@@ -1,8 +1,9 @@
 # Kittrans
 
-[ **English** | [**简体中文**](docs/README_zh-Hans.md) ]
+[ **English** | [**简体中文**](docs/zh-Hans/README.md) ]
 
 A simple translator for Kitty terminal emulator.
+
 
 ## Setting up
 
@@ -11,6 +12,7 @@ A simple translator for Kitty terminal emulator.
 3. Create `config.json` in `configs` directory and [configure it](#configure)
 
 And then, you can select a string of text and press <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>T</kbd> to translate it.
+
 
 ## Configure
 
@@ -22,3 +24,8 @@ Options:
 - `"source"`: source language, `"auto"` for automatically detect
 - `"target"`: target language
 - `"{provider}.options"`: extra options for providers (eg. API keys, endpoint URI)
+
+
+## Provider Modules
+
+See [Provider Modules](docs/provider-modules.md).

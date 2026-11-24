@@ -1,0 +1,37 @@
+# Kittrans | 模块
+
+[ [**English**](../provider-modules.md) | **简体中文** ]
+
+
+## 自定义你自己的提供者
+
+参见 [提供者模块模板](../../src/providers/__init__.py)。
+
+
+## 内置模块
+
+### Microsoft
+
+`providers.microsoft`
+
+微软的免费翻译 API。
+
+
+### Responses API
+
+`providers.responses_api`
+
+使用 OpenAI Responses API 调用语言模型来翻译。
+
+#### 配置项
+
+| 键              | 类型   | 默认值                                              | 描述                      |
+|:----------------|:-------|:----------------------------------------------------|:--------------------------|
+| `"endpoint"`    | 字符串 | `"https://api.openai.com/v1/responses"`             | API 端点 URI。            |
+| `"model"`       | 字符串 | `""`                                                | 模型 ID。                 |
+| `"env_key"`     | 字符串 | `null`                                              | 包含 API 密钥的环境变量。 |
+| `"headers"`     | 对象   | `{}`                                                | 发送至端点的额外请求头。  |
+| `"reasoning"`   | 字符串 | `"none"`                                            | 推理努力。                |
+| `"instruction"` | 字符串 | *见 [源代码](../../src/providers/responses_api.py)* | 给模型的系统提示词。      |
+| `"prompt"`      | 字符串 | *见 [源代码](../../src/providers/responses_api.py)* | 给模型的用户提示词。      |
+| `"temperature"` | 数字   | `0.0`                                               | 采样温度。                |
