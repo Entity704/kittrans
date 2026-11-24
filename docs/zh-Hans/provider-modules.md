@@ -10,6 +10,13 @@
 
 ## 内置模块
 
+### Google
+
+`providers.google`
+
+谷歌翻译 API.
+
+
 ### Microsoft
 
 `providers.microsoft`

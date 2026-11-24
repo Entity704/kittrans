@@ -10,6 +10,13 @@ See [provider template](../src/providers/__init__.py).
 
 ## Built-in Modules
 
+### Google
+
+`providers.google`
+
+Google translate API.
+
+
 ### Microsoft
 
 `providers.microsoft`
