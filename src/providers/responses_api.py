@@ -125,7 +125,7 @@ class Provider:
         result = json.loads(response_data['output'][0]['content'][0]['text'])
 
         source_lang = source
-        if source == 'auto' and result['guessed_language']:
+        if source == 'auto' and result.get('guessed_language'):
             source_lang = f'[auto]{result['guessed_language']}'
 
         return result['translation'], source_lang
