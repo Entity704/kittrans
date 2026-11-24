@@ -1,6 +1,6 @@
-import typing
-import os
 import json
+import os
+import typing
 import urllib.request
 
 DEFAULT_INSTRUCTION = '''\

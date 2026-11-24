@@ -1,6 +1,7 @@
-import typing
 import json
-import urllib.parse, urllib.request
+import typing
+import urllib.parse
+import urllib.request
 
 class Provider:
     def __init__(self, options: dict[str, typing.Any] = {}):

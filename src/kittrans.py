@@ -1,16 +1,24 @@
-import typing
+import importlib
 import json
-import importlib, pathlib
-import os, sys, select, traceback
+import os
+import pathlib
+import select
+import sys
+import traceback
+import typing
 
-import kitty, kitty.utils
-import kittens.tui.handler, kittens.tui.loop
+import kittens.tui.handler
+import kittens.tui.loop
+import kitty.boss
+import kitty.constants
+import kitty.utils
 
-import ansies, string_utils
+import ansies
 import providers
+import string_utils
 
-BASE_DIR = pathlib.Path(
-    os.path.expanduser('~/.config/kitty/kittrans/')).resolve()
+KITTY_CONFIG_DIR = pathlib.Path(kitty.constants.config_dir)
+BASE_DIR = KITTY_CONFIG_DIR / 'kittrans'
 CONFIG_FILE = BASE_DIR / 'configs' / 'config.json'
 
 def load_config() -> dict[str, typing.Any]:
