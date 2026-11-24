@@ -2,7 +2,8 @@
   "provider": "providers.microsoft",
   "source": "auto",
   "target": "zh-Hans",
-  "options": {
-    "api_key": "0123456789abcdef"
+
+  "providers.reponses_api.options": {
+    "env_key": "LLM_API_KEY"
   }
 }

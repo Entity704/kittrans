@@ -1,10 +1,11 @@
 import json
-import importlib, pathlib, os, sys, select
+import importlib, pathlib
+import os, sys, select, traceback
 
 import kitty, kitty.utils
-import kittens
+import kittens.tui.handler, kittens.tui.loop
 
-import ansies, text_wrapper
+import ansies, string_utils
 import providers
 
 BASE_DIR = pathlib.Path(
@@ -21,7 +22,9 @@ def load_provider(config):
     module = importlib.import_module(provider_name)
     provider = getattr(module, 'Provider')
 
-    return provider(config.get('options', {}))
+    options = config.get(f'{provider_name}.options', config.get('options', {}))
+
+    return provider(options)
 
 def read_stdin(timeout: float = 0.5):
     fd = sys.stdin.fileno()
@@ -59,7 +62,7 @@ class Handler(kittens.tui.handler.Handler):
                 context=context
             )
         except Exception as err:
-            self.error = f'Error: {err}'
+            self.error = f'Error: {err}\n{traceback.format_exc()}'
 
     def initialize(self):
         self.cmd.set_cursor_visible(False)
@@ -72,8 +75,8 @@ class Handler(kittens.tui.handler.Handler):
             indent_size = 2 if self.screen_size.cols > 3 else 0
             max_width = max(1, min(80, self.screen_size.cols - indent_size - 1))
 
-            text = text_wrapper.wrap_text(self.text, max_width, indent_size)
-            translation = text_wrapper.wrap_text(self.translation, max_width, indent_size)
+            text = string_utils.wrap_text(self.text, max_width, indent_size)
+            translation = string_utils.wrap_text(self.translation, max_width, indent_size)
 
             self.print(f'{ansies.BOLD}Origin text {ansies.RESET}({self.source}):\n{ansies.YELLOW}')
             for line in text:
@@ -85,7 +88,10 @@ class Handler(kittens.tui.handler.Handler):
                 self.print(line)
             self.print(f'{ansies.RESET}\n')
         else:
-            self.print(f'{ansies.RED}[×] {self.error}{ansies.RESET}\n')
+            self.print(f'{ansies.RED}[×] ', end='')
+            for line in string_utils.wrap_text(self.error, self.screen_size.cols - 1):
+                self.print(line)
+            self.print(ansies.RESET)
 
         self.print(f' {ansies.ITALIC}{ansies.DIM}Press [Enter], [Esc] or [Q]...{ansies.RESET}')
 
