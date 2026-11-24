@@ -4,6 +4,7 @@
   "target": "zh-Hans",
 
   "providers.reponses_api.options": {
+    "model": "anti-intelligence:0.000001m",
     "env_key": "LLM_API_KEY"
   }
 }
