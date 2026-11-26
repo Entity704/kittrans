@@ -1,0 +1,136 @@
+name: Publish releases
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+
+jobs:
+  discover:
+    name: Discover releases
+    runs-on: ubuntu-latest
+
+    outputs:
+      has_releases: ${{ steps.parse.outputs.has_releases }}
+      releases: ${{ steps.parse.outputs.releases }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Parse commits
+        id: parse
+        env:
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.event.after }}
+        shell: bash
+        run: |
+          python3 <<'PYTHON_CODE'
+          import json
+          import os
+          import re
+          import subprocess
+
+          before = os.environ['BEFORE']
+          after = os.environ['AFTER']
+
+          if not after or set(after) == {'0'}:
+              commits = []
+          elif not before or set(before) == {'0'}:
+              result = subprocess.run(
+                  ['git', 'rev-list', '--reverse', after],
+                  check=True,
+                  capture_output=True,
+                  text=True,
+              )
+              commits = result.stdout.splitlines()
+          else:
+              result = subprocess.run(
+                  ['git', 'rev-list', '--reverse', f'{before}..{after}'],
+                  check=True,
+                  capture_output=True,
+                  text=True,
+              )
+              commits = result.stdout.splitlines()
+
+          pattern = re.compile(
+              r'^chore\(release\): release '
+              + r'(?P<version>v[0-9]+(\.[0-9]+)*(-(?P<suffix>[0-9a-z]+))?)'
+              + r'.*\s*'
+              + r'(?P<notes>[\s\S]*)',
+              re.IGNORECASE
+          )
+
+          releases = []
+
+          for sha in commits:
+              message = subprocess.run(
+                  ['git', 'show', '-s', '--format=%B', sha],
+                  check=True,
+                  capture_output=True,
+                  text=True,
+              ).stdout
+
+              match = pattern.match(message)
+
+              if not match:
+                  continue
+
+              version = match.group('version')
+              suffix = match.group('suffix') or ''
+              notes = match.group('notes').strip()
+
+              prerelease = 'rc' in suffix.lower()
+
+              release = {
+                  'sha': sha,
+                  'version': version,
+                  'notes': notes,
+                  'prerelease': prerelease,
+              }
+
+              releases.append(release)
+
+              print('========= Release found =========')
+              print(f'Version: {version}')
+              print(f'Commit: {sha}')
+              print(f'Pre-release: {prerelease}')
+              print('=================================')
+              print()
+
+          output = os.environ['GITHUB_OUTPUT']
+
+          with open(output, 'a', encoding='utf-8') as file:
+              file.write(f'has_releases={str(bool(releases)).lower()}\n')
+              file.write('releases=' + json.dumps( releases, ensure_ascii=False, separators=(',', ':')) + '\n')
+
+          print(f'Total releases found: {len(releases)}')
+          PYTHON_CODE
+
+  publish:
+    name: Publish ${{ matrix.version }}
+    needs: discover
+    if: needs.discover.outputs.has_releases == 'true'
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        include: ${{ fromJSON(needs.discover.outputs.releases) }}
+
+    steps:
+      - name: Publish Release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ matrix.version }}
+          name: ${{ matrix.version }}
+          target_commitish: ${{ matrix.sha }}
+          body: ${{ matrix.notes }}
+          prerelease: ${{ matrix.prerelease }}
+          fail_on_unmatched_files: false
