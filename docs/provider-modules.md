@@ -16,12 +16,24 @@ See [provider template](../src/providers/__init__.py).
 
 Google translate API.
 
+#### Options
+
+| Key         | Type   | Default value | Description                 |
+|:------------|:-------|:--------------|:----------------------------|
+| `"timeout"` | Number | `30`          | Request timeout in seconds. |
+
 
 ### Microsoft
 
 `providers.microsoft`
 
 Microsoft's free translate API.
+
+#### Options
+
+| Key         | Type   | Default value | Description                 |
+|:------------|:-------|:--------------|:----------------------------|
+| `"timeout"` | Number | `30`          | Request timeout in seconds. |
 
 
 ### Responses API
@@ -42,3 +54,4 @@ Uses OpenAI Responses API to call language models to translate.
 | `"instruction"` | String | *See [source code](../src/providers/responses_api.py)* | System prompt for the model.                         |
 | `"prompt"`      | String | *See [source code](../src/providers/responses_api.py)* | User prompt for the model.                           |
 | `"temperature"` | Number | `0.0`                                                  | Sampling temperature.                                |
+| `"timeout"`     | Number | `120`                                                  | Request timeout in seconds.                          |

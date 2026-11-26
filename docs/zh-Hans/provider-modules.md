@@ -14,7 +14,13 @@
 
 `providers.google`
 
-谷歌翻译 API.
+谷歌翻译 API。
+
+#### Options
+
+| 键          | 类型 | 默认值 | 描述           |
+|:------------|:-----|:-------|:---------------|
+| `"timeout"` | 数字 | `30`   | 请求超时秒数。 |
 
 
 ### Microsoft
@@ -22,6 +28,12 @@
 `providers.microsoft`
 
 微软的免费翻译 API。
+
+#### Options
+
+| 键          | 类型 | 默认值 | 描述           |
+|:------------|:-----|:-------|:---------------|
+| `"timeout"` | 数字 | `30`   | 请求超时秒数。 |
 
 
 ### Responses API
@@ -42,3 +54,4 @@
 | `"instruction"` | 字符串 | *见 [源代码](../../src/providers/responses_api.py)* | 给模型的系统提示词。      |
 | `"prompt"`      | 字符串 | *见 [源代码](../../src/providers/responses_api.py)* | 给模型的用户提示词。      |
 | `"temperature"` | 数字   | `0.0`                                               | 采样温度。                |
+| `"timeout"`     | 数字   | `120`                                               | 请求超时秒数。            |
