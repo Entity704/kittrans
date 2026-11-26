@@ -18,6 +18,10 @@ import kittrans_exception
 import providers
 import string_utils
 
+KITTRANS_VERSION_MAJOR = 0
+KITTRANS_VERSION_MINOR = 1
+KITTRANS_VERSION_PATCH = 0
+
 KITTY_CONFIG_DIR = pathlib.Path(kitty.constants.config_dir)
 BASE_DIR = KITTY_CONFIG_DIR / 'kittrans'
 CONFIG_FILE = BASE_DIR / 'configs' / 'config.json'
@@ -115,16 +119,23 @@ class Handler(kittens.tui.handler.Handler):
         self.cmd.clear_screen()
 
         if not self.error:
-            indent_size = 2 if self.screen_size.cols > 3 else 0
-            max_width = max(1, min(80, self.screen_size.cols - indent_size - 1))
-            self.pager.max_rows = max(1, self.screen_size.rows - 7)
+            self.print(
+                f' {ansies.BOLD}Kittrans{ansies.RESET}'
+                + f' v{KITTRANS_VERSION_MAJOR}.{KITTRANS_VERSION_MINOR}.{KITTRANS_VERSION_PATCH}'
+            )
+            self.print('=' * 96)
+            self.print()
+
+            indent_size = 4 if self.screen_size.cols > 4 + 1 else 0
+            max_width = max(1, min(96 - indent_size * 2, self.screen_size.cols - indent_size - 1))
+            self.pager.max_rows = max(1, self.screen_size.rows - 10)
 
             text = '\n'.join(string_utils.wrap_text(self.text, max_width, indent_size))
             translation = '\n'.join(string_utils.wrap_text(self.translation, max_width, indent_size))
 
-            content = f'{ansies.BOLD}Origin text {ansies.RESET}({self.source}):\n\n'
+            content = f'  {ansies.BOLD}Origin text {ansies.RESET}({self.source}):\n\n'
             content += f'{ansies.YELLOW}{text}{ansies.RESET}\n\n\n'
-            content += f'{ansies.BOLD}Translation {ansies.RESET}({self.target}):\n\n'
+            content += f'  {ansies.BOLD}Translation {ansies.RESET}({self.target}):\n\n'
             content += f'{ansies.CYAN}{translation}{ansies.RESET}'
             self.pager.content = content
             self.pager.clip_row()
@@ -137,10 +148,11 @@ class Handler(kittens.tui.handler.Handler):
                 self.print(
                     ansies.BOLD
                     + f'... {lines_left} line{'s' if lines_left > 1 else ''} left'
-                    + ansies.RESET + '\r\n'
+                    + ansies.RESET,
+                    end='\r\n\n'
                 )
             else:
-                self.print('\r\n')
+                self.print(end='\r\n\n')
 
             if content.count('\n') + 1 > self.pager.max_rows:
                 self.print(
@@ -172,12 +184,11 @@ class Handler(kittens.tui.handler.Handler):
                     + f' | {ansies.BOLD}[PageDown]{ansies.RESET}{ansies.DIM}: scroll down'
                     + f' | {ansies.BOLD}[↑]{ansies.RESET}{ansies.DIM}: scroll up one line'
                     + f' | {ansies.BOLD}[↓]{ansies.RESET}{ansies.DIM}: scroll down one line'
-                    + ansies.RESET
+                    + ansies.RESET,
+                    end='\r\n\n'
                 )
             else:
-                self.print('\r\n')
-
-            self.print()
+                self.print(end='\r\n\n\n')
         else:
             if isinstance(self.error, kittrans_exception.KittransError):
                 self.print(f'{ansies.RED}[×] ', end='')
@@ -198,7 +209,8 @@ class Handler(kittens.tui.handler.Handler):
             self.print(
                 f'{ansies.DIM}{ansies.YELLOW}Press '
                 + f'{ansies.BOLD}[m]{ansies.UNSET_BOLD_AND_DIM}{ansies.DIM}'
-                + f' to {'hide' if self.show_traceback else 'show'} traceback\r\n'
+                + f' to {'hide' if self.show_traceback else 'show'} traceback',
+                end='\r\n\n'
             )
 
             self.print(ansies.RESET, end='')
