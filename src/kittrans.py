@@ -21,6 +21,7 @@ import string_utils
 KITTRANS_VERSION_MAJOR = 0
 KITTRANS_VERSION_MINOR = 1
 KITTRANS_VERSION_PATCH = 0
+KITTRANS_VERSION_SUFFIX = ''
 
 KITTY_CONFIG_DIR = pathlib.Path(kitty.constants.config_dir)
 BASE_DIR = KITTY_CONFIG_DIR / 'kittrans'
@@ -122,6 +123,7 @@ class Handler(kittens.tui.handler.Handler):
             self.print(
                 f' {ansies.BOLD}Kittrans{ansies.RESET}'
                 + f' v{KITTRANS_VERSION_MAJOR}.{KITTRANS_VERSION_MINOR}.{KITTRANS_VERSION_PATCH}'
+                + f'{'-' + KITTRANS_VERSION_SUFFIX if KITTRANS_VERSION_SUFFIX else ''}'
             )
             self.print('=' * 96)
             self.print()
