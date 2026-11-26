@@ -2,6 +2,7 @@ import importlib
 import json
 import os
 import pathlib
+import re
 import select
 import sys
 import traceback
@@ -128,8 +129,8 @@ class Handler(kittens.tui.handler.Handler):
             self.print('=' * min(96, self.screen_size.cols))
             self.print()
 
-            indent_size = 4 if self.screen_size.cols > 4 + 1 else 0
-            max_width = max(1, min(96 - indent_size * 2, self.screen_size.cols - indent_size - 1))
+            indent_size = 4 if self.screen_size.cols > 4 * 2 + 1 else 0
+            max_width = max(1, min(96 - indent_size * 2, self.screen_size.cols - indent_size * 2 - 1))
             self.pager.max_rows = max(1, self.screen_size.rows - 10)
 
             text = '\n'.join(string_utils.wrap_text(self.text, max_width, indent_size))
@@ -180,12 +181,22 @@ class Handler(kittens.tui.handler.Handler):
                     + f'{ansies.YELLOW}Origin text{ansies.RESET}, {ansies.CYAN}Translation{ansies.RESET}'
                 )
 
+                key_tip = (
+                    f'{ansies.BOLD}[PageUp]{ansies.RESET}{ansies.DIM}: scroll up'
+                    + f' | {ansies.BOLD}[PageDown]{ansies.RESET}{ansies.DIM}: scroll down'
+                )
+
+                key_tip_part_2 = (
+                    f' | {ansies.BOLD}[↑]{ansies.RESET}{ansies.DIM}: scroll up one line'
+                    + f' | {ansies.BOLD}[↓]{ansies.RESET}{ansies.DIM}: scroll down one line'
+                )
+
+                if len(re.sub(string_utils.ANSI_SGR_RE, '', key_tip + key_tip_part_2)) <= self.screen_size.cols:
+                    key_tip += key_tip_part_2
+
                 self.print(
                     ansies.DIM
-                    + f'{ansies.BOLD}[PageUp]{ansies.RESET}{ansies.DIM}: scroll up'
-                    + f' | {ansies.BOLD}[PageDown]{ansies.RESET}{ansies.DIM}: scroll down'
-                    + f' | {ansies.BOLD}[↑]{ansies.RESET}{ansies.DIM}: scroll up one line'
-                    + f' | {ansies.BOLD}[↓]{ansies.RESET}{ansies.DIM}: scroll down one line'
+                    + key_tip
                     + ansies.RESET,
                     end='\r\n\n'
                 )
@@ -226,7 +237,13 @@ class Handler(kittens.tui.handler.Handler):
         )
 
     def on_key(self, key_event):
-        if key_event.key in ('ENTER', 'ESCAPE', 'q') and key_event.type == kitty.key_encoding.EventType.RELEASE:
+        if (
+            key_event.key in ('ENTER', 'ESCAPE', 'q')
+            and key_event.type == kitty.key_encoding.EventType.RELEASE
+            or key_event.key in ('c', 'd')
+            and key_event.type == kitty.key_encoding.EventType.RELEASE
+            and key_event.ctrl
+        ):
             self.quit_loop(0)
             return
 
