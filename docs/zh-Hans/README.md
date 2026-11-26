@@ -4,7 +4,7 @@
 
 为 Kitty 终端模拟器编写的简易翻译器。
 
-![Release](https://img.shields.io/github/v/release/Entity704/kittrans?style=flat-square&logo=github&logoColor=979DA4&label=Release&labelColor=24292E&color=blue&link=https%3A%2F%2Fgithub.com%2FEntity704%2Fkittrans%2Freleases%2Flatest)
+[![Release](https://img.shields.io/github/v/release/Entity704/kittrans?style=flat-square&logo=github&logoColor=979DA4&label=Release&labelColor=24292E&color=blue)](https://github.com/Entity704/kittrans/releases/latest)
 ![WIP](https://img.shields.io/badge/Status-Work%20in%20Progress-orange?style=flat-square&labelColor=24292E)
 
 
