@@ -2,7 +2,9 @@
 
 [ **English** | [**简体中文**](docs/zh-Hans/README.md) ]
 
-A simple translator for Kitty terminal emulator.
+A simple translator for [Kitty](https://sw.kovidgoyal.net/kitty/) terminal emulator.
+
+![WIP](https://img.shields.io/badge/Status-Work%20in%20Progress-orange?style=flat-square&labelColor=24292E)
 
 
 ## Setting up
@@ -21,9 +23,10 @@ The config file uses JSON format.
 Options:
 
 - `"provider"`: the provider module path
-- `"source"`: source language, `"auto"` for automatically detect
-- `"target"`: target language
-- `"{provider}.options"`: extra options for providers (eg. API keys, endpoint URI)
+- `"source"`: source language, using [BCP 47](https://www.rfc-editor.org/info/rfc5646/) language tag in Language-Script-Region format. `"auto"` for automatically detect
+- `"target"`: target language, using BCP 47 language tag in Language-Script-Region format
+- `"options"`: extra options for all providers (values can be overwritten by the value of the same key in `"{provider}.options"`)
+- `"{provider}.options"`: extra options for specified providers (eg. API keys, endpoint URI)
 
 
 ## Provider Modules

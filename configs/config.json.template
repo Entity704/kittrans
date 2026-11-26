@@ -1,7 +1,7 @@
 {
   "provider": "providers.microsoft",
   "source": "auto",
-  "target": "zh-Hans",
+  "target": "zh-Hans-CN",
 
   "providers.reponses_api.options": {
     "model": "anti-intelligence:0.000001m",

@@ -4,6 +4,8 @@
 
 为 Kitty 终端模拟器编写的简易翻译器。
 
+![WIP](https://img.shields.io/badge/Status-Work%20in%20Progress-orange?style=flat-square&labelColor=24292E)
+
 
 ## 安装
 
@@ -21,8 +23,9 @@
 配置项:
 
 - `"provider"`：翻译提供者模块路径
-- `"source"`：源语言，使用 `"auto"` 以自动检测
-- `"target"`：目标语言
+- `"source"`: 源语言, 使用 [BCP 47](https://www.rfc-editor.org/info/rfc5646/) 语言标签的 Language-Script-Region 格式。`"auto"` 为自动检测
+- `"target"`: 目标语言，使用 BCP 47 语言标签的 Language-Script-Region 格式
+- `"options"`：给所有提供者模块的额外配置（值能够被 `"{provider}.options"` 中相同键的值覆盖）
 - `"{provider}.options"`：给特定提供者的额外配置（如 API 密钥、接口 URI）
 
 
