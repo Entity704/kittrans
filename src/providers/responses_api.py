@@ -117,7 +117,7 @@ class Provider:
                 urllib.error.HTTPError,
                 f'Provider returns HTTP {error.code} ({error.reason}).'
             )
-        except TimeoutError as error:
+        except TimeoutError:
             kittrans_exception.raise_error(
                 TimeoutError,
                 'Request timed out.'
