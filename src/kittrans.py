@@ -95,17 +95,19 @@ class Handler(kittens.tui.handler.Handler):
         self.error = None
         self.show_traceback = False
 
+        self.config = {}
+
         try:
-            config = load_config()
+            self.config = load_config()
 
-            self.target = config.get('target', 'zh-Hans')
+            self.target = self.config.get('target', 'zh-Hans')
 
-            provider = load_provider(config)
+            provider = load_provider(self.config)
 
             self.translation, self.source = provider.translate(
                 text=text,
                 target=self.target,
-                source=config.get('source', 'auto'),
+                source=self.config.get('source', 'auto'),
                 context=context
             )
         except Exception as error:
@@ -158,7 +160,7 @@ class Handler(kittens.tui.handler.Handler):
                 self.print(end='\r\n\n')
 
             if content.count('\n') + 1 > self.pager.max_rows:
-                self.print(
+                status_bar = (
                     f'At line {
                         string_utils.pad(
                             str(self.pager.row + 1),
@@ -178,8 +180,18 @@ class Handler(kittens.tui.handler.Handler):
                         )
                     }%'
                     + ' | '
+                    + self.config.get('provider', 'providers.microsoft')
+                )
+
+                status_bar_part_2 = (
+                    ' | '
                     + f'{ansies.YELLOW}Origin text{ansies.RESET}, {ansies.CYAN}Translation{ansies.RESET}'
                 )
+
+                if len(re.sub(string_utils.ANSI_SGR_RE, '', status_bar + status_bar_part_2)) <= self.screen_size.cols:
+                    status_bar += status_bar_part_2
+
+                self.print(status_bar)
 
                 key_tip = (
                     f'{ansies.BOLD}[PageUp]{ansies.RESET}{ansies.DIM}: scroll up'
