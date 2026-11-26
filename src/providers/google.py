@@ -1,7 +1,10 @@
 import json
 import typing
+import urllib.error
 import urllib.parse
 import urllib.request
+
+import kittrans_exception
 
 GOOGLE_TRANSLATE_PA_API_KEY = 'AIzaSyDLEeFI5OtFBwYBIoK_jj5m32rZK5CkCXA'
 
@@ -31,8 +34,24 @@ class Provider:
             method='GET'
         )
 
-        with urllib.request.urlopen(request, timeout=30) as response:
-            result = json.loads(response.read().decode('utf-8'))
+        try:
+            with urllib.request.urlopen(request, timeout=30) as response:
+                result = json.loads(response.read().decode('utf-8'))
+        except urllib.error.HTTPError as error:
+            kittrans_exception.raise_error(
+                urllib.error.HTTPError,
+                f'Provider returns HTTP {error.code} ({error.reason}).'
+            )
+        except TimeoutError as error:
+            kittrans_exception.raise_error(
+                TimeoutError,
+                'Request timed out.'
+            )
+        except ConnectionError as error:
+            kittrans_exception.raise_error(
+                ConnectionError,
+                f'Failed to connect to provider: {str(error)}.'
+            )
 
         source_lang = source
         if source == 'auto':

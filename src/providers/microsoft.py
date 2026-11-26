@@ -1,7 +1,10 @@
 import json
 import typing
+import urllib.error
 import urllib.parse
 import urllib.request
+
+import kittrans_exception
 
 class Provider:
     def __init__(self, options: dict[str, typing.Any] = {}):
@@ -30,8 +33,24 @@ class Provider:
             method='POST'
         )
 
-        with urllib.request.urlopen(request, timeout=30) as response:
-            result = json.loads(response.read().decode('utf-8'))
+        try:
+            with urllib.request.urlopen(request, timeout=30) as response:
+                result = json.loads(response.read().decode('utf-8'))
+        except urllib.error.HTTPError as error:
+            kittrans_exception.raise_error(
+                urllib.error.HTTPError,
+                f'Provider returns HTTP {error.code} ({error.reason}).'
+            )
+        except TimeoutError as error:
+            kittrans_exception.raise_error(
+                TimeoutError,
+                'Request timed out.'
+            )
+        except ConnectionError as error:
+            kittrans_exception.raise_error(
+                ConnectionError,
+                f'Failed to connect to provider: {str(error)}.'
+            )
 
         if source == 'auto':
             source_lang = f'[auto]{result[0]['detectedLanguage']['language']}, {round(result[0]['detectedLanguage']['score'] * 100)}%'
