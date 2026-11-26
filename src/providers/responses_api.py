@@ -110,7 +110,7 @@ class Provider:
         )
 
         try:
-            with urllib.request.urlopen(request, timeout=120) as response:
+            with urllib.request.urlopen(request, timeout=self.options.get('timeout', 120)) as response:
                 response_data = json.loads(response.read().decode('utf-8'))
         except urllib.error.HTTPError as error:
             kittrans_exception.raise_error(
