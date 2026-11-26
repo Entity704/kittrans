@@ -125,7 +125,7 @@ class Handler(kittens.tui.handler.Handler):
                 + f' v{KITTRANS_VERSION_MAJOR}.{KITTRANS_VERSION_MINOR}.{KITTRANS_VERSION_PATCH}'
                 + f'{'-' + KITTRANS_VERSION_SUFFIX if KITTRANS_VERSION_SUFFIX else ''}'
             )
-            self.print('=' * 96)
+            self.print('=' * min(96, self.screen_size.cols))
             self.print()
 
             indent_size = 4 if self.screen_size.cols > 4 + 1 else 0
