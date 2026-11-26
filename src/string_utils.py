@@ -1,4 +1,7 @@
+import re
 import unicodedata
+
+ANSI_SGR_RE = re.compile(r'\033\[[0-9;]*m')
 
 SPECIAL_WIDTH_MAP = {
     '“': 'H',
@@ -24,6 +27,7 @@ def wrap_text(
     indent: int = 0
 ) -> list[str]:
     text = text.replace('\t', ' ' * 4)
+    text = text.replace('\r\n', '\n')
     lines = text.split('\n')
 
     indent_str = ' ' * indent
@@ -54,3 +58,46 @@ def wrap_text(
         row += 1
 
     return lines
+
+def pad(
+    text: str,
+    width: int,
+    char: str = '0',
+    prefix: str = '',
+    suffix: str = ''
+) -> str:
+    text = str(text)
+    padding = char * max(0, width - len(text))
+    return f'{prefix}{padding}{suffix}{text}'
+
+class Pager:
+    def __init__(self, content: str, max_rows: int = 1, row: int = 0):
+        self.content = content.replace('\r\n', '\n')
+        self.max_rows = max_rows
+        self._row = row
+
+    @property
+    def row(self) -> int:
+        self.clip_row()
+        return self._row
+
+    @row.setter
+    def row(self, value):
+        self._row = value
+        self.clip_row()
+
+    def clip_row(self): self._row = max(0, min(self.rows() - self.max_rows, self._row))
+    def page_up(self, rows: int = 15): self.row -= rows
+    def page_down(self, rows: int = 15): self.row += rows
+
+    def rows(self) -> int: return self.content.count('\n') + 1
+    def progress(self) -> float: return self.row / max(1, self.rows() - self.max_rows)
+
+    def get_view(self) -> list[str]:
+        lines = self.content.split('\n')
+        lines.extend([''] * self.max_rows)
+
+        view = lines[self.row:self.row + self.max_rows]
+        view[0] = ''.join(ANSI_SGR_RE.findall('\n'.join(lines[:self.row]))) + view[0]
+
+        return view

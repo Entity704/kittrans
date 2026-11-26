@@ -79,6 +79,7 @@ def read_stdin(timeout: float = 0.5) -> str:
 class Handler(kittens.tui.handler.Handler):
     def __init__(self, text: str, context: str = ''):
         super().__init__()
+
         self.text = text
 
         self.translation = ''
@@ -104,6 +105,8 @@ class Handler(kittens.tui.handler.Handler):
         except Exception as error:
             self.error = error
 
+        self.pager = string_utils.Pager('')
+
     def initialize(self):
         self.cmd.set_cursor_visible(False)
         self.draw()
@@ -114,15 +117,67 @@ class Handler(kittens.tui.handler.Handler):
         if not self.error:
             indent_size = 2 if self.screen_size.cols > 3 else 0
             max_width = max(1, min(80, self.screen_size.cols - indent_size - 1))
+            self.pager.max_rows = max(1, self.screen_size.rows - 7)
 
-            text = '\r\n'.join(string_utils.wrap_text(self.text, max_width, indent_size))
-            translation = '\r\n'.join(string_utils.wrap_text(self.translation, max_width, indent_size))
+            text = '\n'.join(string_utils.wrap_text(self.text, max_width, indent_size))
+            translation = '\n'.join(string_utils.wrap_text(self.translation, max_width, indent_size))
 
-            self.print(f'{ansies.BOLD}Origin text {ansies.RESET}({self.source}):\n')
-            self.print(f'{ansies.YELLOW}{text}{ansies.RESET}\n')
+            content = f'{ansies.BOLD}Origin text {ansies.RESET}({self.source}):\n\n'
+            content += f'{ansies.YELLOW}{text}{ansies.RESET}\n\n\n'
+            content += f'{ansies.BOLD}Translation {ansies.RESET}({self.target}):\n\n'
+            content += f'{ansies.CYAN}{translation}{ansies.RESET}'
+            self.pager.content = content
+            self.pager.clip_row()
 
-            self.print(f'{ansies.BOLD}Translation {ansies.RESET}({self.target}):\n')
-            self.print(f'{ansies.CYAN}{translation}{ansies.RESET}\n')
+            self.print('\r\n'.join(self.pager.get_view()) + ansies.RESET)
+
+            lines_left = self.pager.rows() - self.pager.max_rows - self.pager.row
+
+            if lines_left > 0:
+                self.print(
+                    ansies.BOLD
+                    + f'... {lines_left} line{'s' if lines_left > 1 else ''} left'
+                    + ansies.RESET + '\r\n'
+                )
+            else:
+                self.print('\r\n')
+
+            if content.count('\n') + 1 > self.pager.max_rows:
+                self.print(
+                    f'At line {
+                        string_utils.pad(
+                            str(self.pager.row + 1),
+                            len(str(self.pager.rows() - self.pager.max_rows + 1)),
+                            '0',
+                            ansies.DIM,
+                            ansies.RESET
+                        )
+                    }, '
+                    + f'{
+                        string_utils.pad(
+                            str(round(self.pager.progress() * 100)),
+                            3,
+                            '0',
+                            ansies.DIM,
+                            ansies.RESET
+                        )
+                    }%'
+                    + ' | '
+                    + f'{ansies.YELLOW}Origin text{ansies.RESET}, {ansies.CYAN}Translation{ansies.RESET}'
+                )
+
+                self.print(
+                    ansies.DIM
+                    + f'{ansies.BOLD}[PageUp]{ansies.RESET}{ansies.DIM}: scroll up'
+                    + f' | {ansies.BOLD}[PageDown]{ansies.RESET}{ansies.DIM}: scroll down'
+                    + f' | {ansies.BOLD}[↑]{ansies.RESET}{ansies.DIM}: scroll up one line'
+                    + f' | {ansies.BOLD}[↓]{ansies.RESET}{ansies.DIM}: scroll down one line'
+                    + ansies.RESET
+                )
+            else:
+                self.print('\r\n')
+
+            self.print()
         else:
             if isinstance(self.error, kittrans_exception.KittransError):
                 self.print(f'{ansies.RED}[×] ', end='')
@@ -141,19 +196,40 @@ class Handler(kittens.tui.handler.Handler):
                 )
 
             self.print(
-                f'{ansies.DIM}{ansies.YELLOW}Press [m] to {'hide' if self.show_traceback else 'show'} traceback\r\n'
+                f'{ansies.DIM}{ansies.YELLOW}Press '
+                + f'{ansies.BOLD}[m]{ansies.UNSET_BOLD_AND_DIM}{ansies.DIM}'
+                + f' to {'hide' if self.show_traceback else 'show'} traceback\r\n'
             )
 
             self.print(ansies.RESET, end='')
 
-        self.print(f'{ansies.ITALIC}{ansies.DIM}Press [Enter], [Esc] or [Q] to quit{ansies.RESET}')
+        self.print(
+            f'{ansies.ITALIC}{ansies.DIM}Press '
+            + f'{ansies.RESET}{ansies.BOLD}{ansies.DIM}[Enter]{ansies.RESET}{ansies.ITALIC}{ansies.DIM}'
+            + f', {ansies.RESET}{ansies.BOLD}{ansies.DIM}[Esc]{ansies.RESET}{ansies.ITALIC}{ansies.DIM}'
+            + f' or {ansies.RESET}{ansies.BOLD}{ansies.DIM}[Q]{ansies.RESET}{ansies.ITALIC}{ansies.DIM}'
+            + f' to quit{ansies.RESET}'
+        )
 
     def on_key(self, key_event):
-        if key_event.key in ('ENTER', 'ESCAPE', 'q'):
+        if key_event.key in ('ENTER', 'ESCAPE', 'q') and key_event.type == kitty.key_encoding.EventType.RELEASE:
             self.quit_loop(0)
-        elif key_event.key == 'm' and self.error:
-            self.show_traceback = not self.show_traceback
+            return
+
+        if key_event.type not in (kitty.key_encoding.EventType.PRESS, kitty.key_encoding.EventType.REPEAT):
+            return
+
+        if not self.error:
+            if key_event.key == 'PAGE_UP': self.pager.page_up()
+            elif key_event.key == 'PAGE_DOWN': self.pager.page_down()
+            elif key_event.key == 'UP': self.pager.page_up(1)
+            elif key_event.key == 'DOWN': self.pager.page_down(1)
+
             self.draw()
+        else:
+            if key_event.key == 'm':
+                self.show_traceback = not self.show_traceback
+                self.draw()
 
     def on_resize(self, new_size):
         self.draw()
