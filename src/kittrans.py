@@ -230,10 +230,10 @@ class Handler(kittens.tui.handler.Handler):
             self.quit_loop(0)
             return
 
-        if key_event.type not in (kitty.key_encoding.EventType.PRESS, kitty.key_encoding.EventType.REPEAT):
-            return
-
         if not self.error:
+            if key_event.type not in (kitty.key_encoding.EventType.PRESS, kitty.key_encoding.EventType.REPEAT):
+                return
+
             if key_event.key == 'PAGE_UP': self.pager.page_up()
             elif key_event.key == 'PAGE_DOWN': self.pager.page_down()
             elif key_event.key == 'UP': self.pager.page_up(1)
