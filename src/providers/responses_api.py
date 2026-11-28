@@ -63,16 +63,12 @@ class Provider:
     def __init__(self, options: dict[str, typing.Any] = {}):
         self.options = options
 
-        self.endpoint    = options['endpoint'   ]
         self.model       = options['model'      ]
-        self.env_key     = options['env_key'    ]
-        self.headers     = options['headers'    ]
-        self.reasoning   = options['reasoning'  ]
         self.instruction = options['instruction'] or DEFAULT_INSTRUCTION
         self.prompt      = options['prompt'     ] or DEFAULT_PROMPT
-        self.temperature = options['temperature']
 
-        self.api_key = os.getenv(self.env_key) if self.env_key else None
+        env_key = options['env_key']
+        self.api_key = os.getenv(env_key) if env_key else None
 
     def translate(
         self,
@@ -85,8 +81,7 @@ class Provider:
         headers['Content-Type'] = 'application/json'
         if self.api_key:
             headers['Authorization'] = f'Bearer {self.api_key}'
-        for key, value in self.headers:
-            headers[key] = value
+        headers = headers | self.options['headers']
 
         data = {
             'input': self.prompt.format(
@@ -97,16 +92,16 @@ class Provider:
             ),
             'instructions': self.instruction,
             'reasoning': {
-                'effort': self.reasoning
+                'effort': self.options['reasoning']
             },
-            'temperature': self.temperature,
+            'temperature': self.options['temperature'],
             'stream': False
         }
 
         if self.model: data['model'] = self.model
 
         request = urllib.request.Request(
-            self.endpoint,
+            self.options['endpoint'],
             data=json.dumps(data).encode('utf-8'),
             headers=headers,
             method='POST'
