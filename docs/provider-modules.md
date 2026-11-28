@@ -44,14 +44,15 @@ Uses OpenAI Responses API to call language models to translate.
 
 #### Options
 
-| Key             | Type   | Default value                                          | Description                                          |
-|:----------------|:-------|:-------------------------------------------------------|:-----------------------------------------------------|
-| `"endpoint"`    | String | `"https://api.openai.com/v1/responses"`                | API endpoint URI.                                    |
-| `"model"`       | String | `""`                                                   | Model ID.                                            |
-| `"env_key"`     | String | `null`                                                 | Environment variable name which contains an API key. |
-| `"headers"`     | Object | `{}`                                                   | Extra headers to send to the endpoint.               |
-| `"reasoning"`   | String | `"none"`                                               | Reasoning effort.                                    |
-| `"instruction"` | String | *See [source code](../src/providers/responses_api.py)* | System prompt for the model.                         |
-| `"prompt"`      | String | *See [source code](../src/providers/responses_api.py)* | User prompt for the model.                           |
-| `"temperature"` | Number | `0.0`                                                  | Sampling temperature.                                |
-| `"timeout"`     | Number | `120`                                                  | Request timeout in seconds.                          |
+| Key             | Type    | Default value                                          | Description                                                 |
+|:----------------|:--------|:-------------------------------------------------------|:------------------------------------------------------------|
+| `"endpoint"`    | String  | `"https://api.openai.com/v1/responses"`                | API endpoint URI.                                           |
+| `"model"`       | String  | `""`                                                   | Model ID.                                                   |
+| `"env_key"`     | String  | `null`                                                 | Name of the environment variable that contains the API key. |
+| `"context"`     | Boolean | `true`                                                 | Whether to send the screen content to the model as context. |
+| `"headers"`     | Object  | `{}`                                                   | Additional HTTP headers to include in the request.          |
+| `"reasoning"`   | String  | `"none"`                                               | Reasoning effort level.                                     |
+| `"instruction"` | String  | *See [source code](../src/providers/responses_api.py)* | System prompt for the model.                                |
+| `"prompt"`      | String  | *See [source code](../src/providers/responses_api.py)* | User prompt for the model.                                  |
+| `"temperature"` | Number  | `0.0`                                                  | Sampling temperature.                                       |
+| `"timeout"`     | Number  | `120`                                                  | Request timeout in seconds.                                 |
