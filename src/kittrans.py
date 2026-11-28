@@ -18,7 +18,7 @@ import string_utils
 
 KITTRANS_VERSION_MAJOR = 0
 KITTRANS_VERSION_MINOR = 1
-KITTRANS_VERSION_PATCH = 0
+KITTRANS_VERSION_PATCH = 1
 KITTRANS_VERSION_SUFFIX = ''
 
 def read_stdin(timeout: float = 0.5) -> str:
