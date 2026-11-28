@@ -21,13 +21,15 @@
 
 配置文件使用 JSON 格式。
 
-配置项:
+### 配置项
 
-- `"provider"`：翻译提供者模块路径
-- `"source"`: 源语言, 使用 [BCP 47](https://www.rfc-editor.org/info/rfc5646/) 语言标签的 Language-Script-Region 格式。`"auto"` 为自动检测
-- `"target"`: 目标语言，使用 BCP 47 语言标签的 Language-Script-Region 格式
-- `"options"`：给所有提供者模块的额外配置（值能够被 `"{provider}.options"` 中相同键的值覆盖）
-- `"{provider}.options"`：给特定提供者的额外配置（如 API 密钥、接口 URI）
+| 键                     | 类型   | 默认值                              | 描述                                                                                                                          |
+|:-----------------------|:-------|:------------------------------------|:------------------------------------------------------------------------------------------------------------------------------|
+| `"provider"`           | 字符串 | `"providers.microsoft"`             | 翻译提供者模块路径。                                                                                                          |
+| `"source"`             | 字符串 | `"auto"`                            | 源语言, 使用 [BCP 47](https://www.rfc-editor.org/info/rfc5646/) 语言标签的 Language-Script-Region 格式。`"auto"` 为自动检测。 |
+| `"target"`             | 字符串 |                                     | 目标语言，使用 BCP 47 语言标签的 L-S-R 格式。                                                                                 |
+| `"options"`            | 对象   | `{}`                                | 给所有提供者模块的额外配置（值能够被 `"{provider}.options"` 中相同键的值覆盖）。                                              |
+| `"{provider}.options"` | 对象   | 见 [模块](docs/provider-modules.md) | 给特定提供者的额外配置（如 API 密钥、接口 URI）。                                                                             |
 
 
 ## 模块

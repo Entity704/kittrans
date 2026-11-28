@@ -21,13 +21,15 @@ And then, you can select a string of text and press <kbd>Alt</kbd> + <kbd>Shift<
 
 The config file uses JSON format.
 
-Options:
+### Options
 
-- `"provider"`: the provider module path
-- `"source"`: source language, using [BCP 47](https://www.rfc-editor.org/info/rfc5646/) language tag in Language-Script-Region format. `"auto"` for automatically detect
-- `"target"`: target language, using BCP 47 language tag in Language-Script-Region format
-- `"options"`: extra options for all providers (values can be overwritten by the value of the same key in `"{provider}.options"`)
-- `"{provider}.options"`: extra options for specified providers (eg. API keys, endpoint URI)
+| Key                    | Type   | Default value                                    | Description                                                                                                                                                 |
+|:-----------------------|:-------|:-------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `"provider"`           | String | `"providers.microsoft"`                          | The provider module path.                                                                                                                                   |
+| `"source"`             | String | `"auto"`                                         | Source language, using [BCP 47](https://www.rfc-editor.org/info/rfc5646/) language tag in Language-Script-Region format. `"auto"` for automatically detect. |
+| `"target"`             | String |                                                  | Target language, using BCP 47 language tag in L-S-R format.                                                                                                 |
+| `"options"`            | Object | `{}`                                             | Extra options for all providers (values can be overwritten by the value of the same key in `"{provider}.options"`).                                         |
+| `"{provider}.options"` | Object | See [Provider Modules](docs/provider-modules.md) | Extra options for specified providers (eg. API keys, endpoint URI).                                                                                         |
 
 
 ## Provider Modules
