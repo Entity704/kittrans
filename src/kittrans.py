@@ -1,3 +1,4 @@
+import asyncio
 import importlib
 import json
 import os
@@ -12,6 +13,7 @@ import kittens.tui.handler
 import kittens.tui.loop
 import kitty.boss
 import kitty.constants
+import kitty.key_encoding
 import kitty.utils
 
 import ansies
@@ -87,8 +89,13 @@ class Handler(kittens.tui.handler.Handler):
         super().__init__()
 
         self.text = text
+        self.context = context
+
+    def initialize(self):
+        self.cmd.set_cursor_visible(False)
 
         self.translation = ''
+        self.pager = string_utils.Pager('')
         self.source = 'auto'
         self.target = 'undefined'
 
@@ -96,6 +103,13 @@ class Handler(kittens.tui.handler.Handler):
         self.show_traceback = False
 
         self.config = {}
+
+        self.print_title()
+        self.print('Processing...')
+        self.asyncio_loop.create_task(self.run_translation())
+
+    async def run_translation(self):
+        await asyncio.sleep(0)
 
         try:
             self.config = load_config()
@@ -105,31 +119,31 @@ class Handler(kittens.tui.handler.Handler):
             provider = load_provider(self.config)
 
             self.translation, self.source = provider.translate(
-                text=text,
+                text=self.text,
                 target=self.target,
                 source=self.config.get('source', 'auto'),
-                context=context
+                context=self.context
             )
         except Exception as error:
             self.error = error
 
-        self.pager = string_utils.Pager('')
-
-    def initialize(self):
-        self.cmd.set_cursor_visible(False)
         self.draw()
 
+    def print_title(self):
+        self.print(
+            f' {ansies.BOLD}Kittrans{ansies.RESET}'
+            + f' v{KITTRANS_VERSION_MAJOR}.{KITTRANS_VERSION_MINOR}.{KITTRANS_VERSION_PATCH}'
+            + f'{'-' + KITTRANS_VERSION_SUFFIX if KITTRANS_VERSION_SUFFIX else ''}'
+        )
+        self.print('=' * min(96, self.screen_size.cols))
+        self.print()
+
+    @kittens.tui.handler.Handler.atomic_update
     def draw(self):
         self.cmd.clear_screen()
 
         if not self.error:
-            self.print(
-                f' {ansies.BOLD}Kittrans{ansies.RESET}'
-                + f' v{KITTRANS_VERSION_MAJOR}.{KITTRANS_VERSION_MINOR}.{KITTRANS_VERSION_PATCH}'
-                + f'{'-' + KITTRANS_VERSION_SUFFIX if KITTRANS_VERSION_SUFFIX else ''}'
-            )
-            self.print('=' * min(96, self.screen_size.cols))
-            self.print()
+            self.print_title()
 
             indent_size = 4 if self.screen_size.cols > 4 * 2 + 1 else 0
             max_width = max(1, min(96 - indent_size * 2, self.screen_size.cols - indent_size * 2 - 1))
@@ -179,12 +193,12 @@ class Handler(kittens.tui.handler.Handler):
                             ansies.RESET
                         )
                     }%'
-                    + ' | '
-                    + self.config.get('provider', 'providers.microsoft')
                 )
 
                 status_bar_part_2 = (
                     ' | '
+                    + self.config.get('provider', 'providers.microsoft')
+                    + ' | '
                     + f'{ansies.YELLOW}Origin text{ansies.RESET}, {ansies.CYAN}Translation{ansies.RESET}'
                 )
 
@@ -206,14 +220,16 @@ class Handler(kittens.tui.handler.Handler):
                 if len(re.sub(string_utils.ANSI_SGR_RE, '', key_tip + key_tip_part_2)) <= self.screen_size.cols:
                     key_tip += key_tip_part_2
 
-                self.print(
-                    ansies.DIM
-                    + key_tip
-                    + ansies.RESET,
-                    end='\r\n\n'
-                )
+                self.print(ansies.DIM + key_tip + ansies.RESET, end='\r\n\n')
             else:
-                self.print(end='\r\n\n\n')
+                status_bar = (
+                    self.config.get('provider', 'providers.microsoft')
+                    + ' | '
+                    + f'{ansies.YELLOW}Origin text{ansies.RESET}, {ansies.CYAN}Translation{ansies.RESET}'
+                )
+
+                self.print('\r\n' + status_bar, end='\r\n\n')
+
         else:
             if isinstance(self.error, kittrans_exception.KittransError):
                 self.print(f'{ansies.RED}[×] ', end='')
@@ -234,23 +250,20 @@ class Handler(kittens.tui.handler.Handler):
             self.print(
                 f'{ansies.DIM}{ansies.YELLOW}Press '
                 + f'{ansies.BOLD}[m]{ansies.UNSET_BOLD_AND_DIM}{ansies.DIM}'
-                + f' to {'hide' if self.show_traceback else 'show'} traceback',
+                + f' to {'hide' if self.show_traceback else 'show'} traceback{ansies.RESET}',
                 end='\r\n\n'
             )
 
-            self.print(ansies.RESET, end='')
-
         self.print(
             f'{ansies.ITALIC}{ansies.DIM}Press '
-            + f'{ansies.RESET}{ansies.BOLD}{ansies.DIM}[Enter]{ansies.RESET}{ansies.ITALIC}{ansies.DIM}'
-            + f', {ansies.RESET}{ansies.BOLD}{ansies.DIM}[Esc]{ansies.RESET}{ansies.ITALIC}{ansies.DIM}'
+            + f'{ansies.RESET}{ansies.BOLD}{ansies.DIM}[Esc]{ansies.RESET}{ansies.ITALIC}{ansies.DIM}'
             + f' or {ansies.RESET}{ansies.BOLD}{ansies.DIM}[Q]{ansies.RESET}{ansies.ITALIC}{ansies.DIM}'
             + f' to quit{ansies.RESET}'
         )
 
     def on_key(self, key_event):
         if (
-            key_event.key in ('ENTER', 'ESCAPE', 'q')
+            key_event.key in ('ESCAPE', 'q')
             and key_event.type == kitty.key_encoding.EventType.RELEASE
             or key_event.key in ('c', 'd')
             and key_event.type == kitty.key_encoding.EventType.RELEASE
