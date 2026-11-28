@@ -93,7 +93,12 @@ class Provider:
 
         data = {
             'model': self.model,
-            'input': self.prompt.format(source=source, target=target, source_text=text, context=context),
+            'input': self.prompt.format(
+                source=source,
+                target=target,
+                source_text=text,
+                context=context if self.options.get('context', True) else '(Context is disabled)'
+            ),
             'instructions': self.instruction,
             'reasoning': {
                 'effort': self.reasoning
