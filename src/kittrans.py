@@ -1,76 +1,25 @@
 import asyncio
-import importlib
-import json
 import os
-import pathlib
 import re
 import select
 import sys
 import traceback
-import typing
 
 import kittens.tui.handler
 import kittens.tui.loop
 import kitty.boss
-import kitty.constants
 import kitty.key_encoding
 import kitty.utils
 
 import ansies
+import configuration
 import kittrans_exception
-import providers
 import string_utils
 
 KITTRANS_VERSION_MAJOR = 0
 KITTRANS_VERSION_MINOR = 1
 KITTRANS_VERSION_PATCH = 0
 KITTRANS_VERSION_SUFFIX = ''
-
-KITTY_CONFIG_DIR = pathlib.Path(kitty.constants.config_dir)
-BASE_DIR = KITTY_CONFIG_DIR / 'kittrans'
-CONFIG_FILE = BASE_DIR / 'configs' / 'config.json'
-
-def load_config() -> dict[str, typing.Any]:
-    config = {}
-    try:
-        with open(CONFIG_FILE, encoding='utf-8') as file:
-            config = json.load(file)
-    except FileNotFoundError:
-        kittrans_exception.raise_error(
-            FileNotFoundError,
-            f'Config file not found!\nPlease create one at `{CONFIG_FILE}`.'
-        )
-    except json.decoder.JSONDecodeError as error:
-        kittrans_exception.raise_error(
-            SyntaxError,
-            'Failed to decode config file!\nPlease use a valid JSON format.',
-            error,
-            False
-        )
-
-    if not config.get('target'):
-        kittrans_exception.raise_error(
-            KeyError,
-            'You must specify a target language by adding an entry with the\nkey "target" and a value in BCP 47 language tag format.'
-        )
-
-    return config
-
-def load_provider(config: dict[str, typing.Any]) -> providers.Provider:
-    provider_name = config.get('provider', 'providers.microsoft')
-
-    try:
-        module = importlib.import_module(provider_name)
-    except ModuleNotFoundError:
-        kittrans_exception.raise_error(ModuleNotFoundError, f'Provider module `{provider_name}` not found!')
-    except Exception as error:
-        kittrans_exception.raise_error(ImportError, 'Provider module appears internal error!', error)
-
-    provider = getattr(module, 'Provider')
-
-    options = config.get('options', {}) | config.get(f'{provider_name}.options', {})
-
-    return provider(options)
 
 def read_stdin(timeout: float = 0.5) -> str:
     fd = sys.stdin.fileno()
@@ -112,11 +61,11 @@ class Handler(kittens.tui.handler.Handler):
         await asyncio.sleep(0)
 
         try:
-            self.config = load_config()
+            self.config = configuration.load_config()
 
             self.target = self.config.get('target', 'zh-Hans')
 
-            provider = load_provider(self.config)
+            provider = configuration.load_provider(self.config)
 
             self.translation, self.source = provider.translate(
                 text=self.text,

@@ -63,19 +63,16 @@ class Provider:
     def __init__(self, options: dict[str, typing.Any] = {}):
         self.options = options
 
-        self.endpoint = options.get('endpoint', 'https://api.openai.com/v1/responses')
-        self.model = options.get('model', '')
-        self.env_key = options.get('env_key', None)
+        self.endpoint    = options['endpoint'   ]
+        self.model       = options['model'      ]
+        self.env_key     = options['env_key'    ]
+        self.headers     = options['headers'    ]
+        self.reasoning   = options['reasoning'  ]
+        self.instruction = options['instruction'] or DEFAULT_INSTRUCTION
+        self.prompt      = options['prompt'     ] or DEFAULT_PROMPT
+        self.temperature = options['temperature']
 
-        self.api_key = None
-        if self.env_key:
-            self.api_key = os.getenv(self.env_key)
-
-        self.headers = options.get('headers', {})
-        self.reasoning = options.get('reasoning', 'none')
-        self.instruction = options.get('instruction', DEFAULT_INSTRUCTION)
-        self.prompt = options.get('prompt', DEFAULT_PROMPT)
-        self.temperature = options.get('temperature', 0.0)
+        self.api_key = os.getenv(self.env_key) if self.env_key else None
 
     def translate(
         self,
@@ -92,12 +89,11 @@ class Provider:
             headers[key] = value
 
         data = {
-            'model': self.model,
             'input': self.prompt.format(
                 source=source,
                 target=target,
                 source_text=text,
-                context=context if self.options.get('context', True) else '(Context is disabled)'
+                context=context if self.options['context'] else '(Context is disabled)'
             ),
             'instructions': self.instruction,
             'reasoning': {
@@ -107,6 +103,8 @@ class Provider:
             'stream': False
         }
 
+        if self.model: data['model'] = self.model
+
         request = urllib.request.Request(
             self.endpoint,
             data=json.dumps(data).encode('utf-8'),
@@ -115,7 +113,7 @@ class Provider:
         )
 
         try:
-            with urllib.request.urlopen(request, timeout=self.options.get('timeout', 120)) as response:
+            with urllib.request.urlopen(request, timeout=self.options['timeout']) as response:
                 response_data = json.loads(response.read().decode('utf-8'))
         except urllib.error.HTTPError as error:
             kittrans_exception.raise_error(
