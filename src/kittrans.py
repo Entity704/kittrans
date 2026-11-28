@@ -53,8 +53,10 @@ class Handler(kittens.tui.handler.Handler):
 
         self.config = {}
 
+        indent = ' ' * (2 if self.screen_size.cols > 4 * 2 + 1 else 0)
+
         self.print_title()
-        self.print('Processing...')
+        self.print(indent + 'Processing...')
         self.asyncio_loop.create_task(self.run_translation())
 
     async def run_translation(self):
@@ -95,15 +97,16 @@ class Handler(kittens.tui.handler.Handler):
             self.print_title()
 
             indent_size = 4 if self.screen_size.cols > 4 * 2 + 1 else 0
+            title_indent = ' ' * (indent_size // 2)
             max_width = max(1, min(96 - indent_size * 2, self.screen_size.cols - indent_size * 2 - 1))
             self.pager.max_rows = max(1, self.screen_size.rows - 10)
 
             text = '\n'.join(string_utils.wrap_text(self.text, max_width, indent_size))
             translation = '\n'.join(string_utils.wrap_text(self.translation, max_width, indent_size))
 
-            content = f'  {ansies.BOLD}Origin text {ansies.RESET}({self.source}):\n\n'
+            content = f'{title_indent}{ansies.BOLD}Origin text {ansies.RESET}({self.source}):\n\n'
             content += f'{ansies.YELLOW}{text}{ansies.RESET}\n\n\n'
-            content += f'  {ansies.BOLD}Translation {ansies.RESET}({self.target}):\n\n'
+            content += f'{title_indent}{ansies.BOLD}Translation {ansies.RESET}({self.target}):\n\n'
             content += f'{ansies.CYAN}{translation}{ansies.RESET}'
             self.pager.content = content
             self.pager.clip_row()
