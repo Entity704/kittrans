@@ -18,9 +18,9 @@ Google translate API.
 
 #### Options
 
-| Key         | Type   | Default value | Description                 |
-|:------------|:-------|:--------------|:----------------------------|
-| `"timeout"` | Number | `30`          | Request timeout in seconds. |
+| Key         | Type    | Default value | Description                 |
+|:------------|:--------|:--------------|:----------------------------|
+| `"timeout"` | Integer | `30`          | Request timeout in seconds. |
 
 
 ### Microsoft
@@ -31,9 +31,9 @@ Microsoft's free translate API.
 
 #### Options
 
-| Key         | Type   | Default value | Description                 |
-|:------------|:-------|:--------------|:----------------------------|
-| `"timeout"` | Number | `30`          | Request timeout in seconds. |
+| Key         | Type    | Default value | Description                 |
+|:------------|:--------|:--------------|:----------------------------|
+| `"timeout"` | Integer | `30`          | Request timeout in seconds. |
 
 
 ### Responses API
@@ -44,15 +44,15 @@ Uses OpenAI Responses API to call language models to translate.
 
 #### Options
 
-| Key             | Type    | Default value                                          | Description                                                 |
-|:----------------|:--------|:-------------------------------------------------------|:------------------------------------------------------------|
-| `"endpoint"`    | String  | `"https://api.openai.com/v1/responses"`                | API endpoint URI.                                           |
-| `"model"`       | String  | `""`                                                   | Model ID.                                                   |
-| `"env_key"`     | String  | `null`                                                 | Name of the environment variable that contains the API key. |
-| `"context"`     | Boolean | `true`                                                 | Whether to send the screen content to the model as context. |
-| `"headers"`     | Object  | `{}`                                                   | Additional HTTP headers to include in the request.          |
-| `"reasoning"`   | String  | `"none"`                                               | Reasoning effort level.                                     |
-| `"instruction"` | String  | *See [source code](../src/providers/responses_api.py)* | System prompt for the model.                                |
-| `"prompt"`      | String  | *See [source code](../src/providers/responses_api.py)* | User prompt for the model.                                  |
-| `"temperature"` | Number  | `0.0`                                                  | Sampling temperature.                                       |
-| `"timeout"`     | Number  | `120`                                                  | Request timeout in seconds.                                 |
+| Key             | Type           | Default value                                          | Description                                                 |
+|:----------------|:---------------|:-------------------------------------------------------|:------------------------------------------------------------|
+| `"endpoint"`    | String         | `"https://api.openai.com/v1/responses"`                | API endpoint URI.                                           |
+| `"model"`       | String \| Null | `null`                                                 | Model ID.                                                   |
+| `"env_key"`     | String \| Null | `null`                                                 | Name of the environment variable that contains the API key. |
+| `"context"`     | Boolean        | `true`                                                 | Whether to send the screen content to the model as context. |
+| `"headers"`     | Object         | `{}`                                                   | Additional HTTP headers to include in the request.          |
+| `"reasoning"`   | String         | `"none"`                                               | Reasoning effort level.                                     |
+| `"instruction"` | String         | *See [source code](../src/providers/responses_api.py)* | System prompt for the model.                                |
+| `"prompt"`      | String         | *See [source code](../src/providers/responses_api.py)* | User prompt for the model.                                  |
+| `"temperature"` | Float          | `0.0`                                                  | Sampling temperature.                                       |
+| `"timeout"`     | Integer        | `120`                                                  | Request timeout in seconds.                                 |
